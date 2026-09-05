@@ -14,3 +14,15 @@ class BuildingResponse(BaseModel):
 class BuildingUpdate(BaseModel):
     name: str
     address: str
+
+class DepartmentCreate(BaseModel):
+    name: str
+
+class DepartmentUpdate(BaseModel):
+    name: str
+
+class DepartmentResponse(BaseModel):
+    id: int
+    name: str
+
+    model_config = ConfigDict(from_attributes=True)
