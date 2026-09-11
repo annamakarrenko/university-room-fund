@@ -2,8 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Building
-from app.schemas import BuildingCreate, BuildingResponse, BuildingUpdate
+from app.models import Building, Room
+from app.schemas import (
+    BuildingCreate,
+    BuildingResponse,
+    BuildingUpdate,
+    RoomResponse,
+)
 
 router = APIRouter(
     prefix="/buildings",
@@ -87,3 +92,25 @@ def delete_building(
 
     db.delete(building)
     db.commit()
+
+@router.get(
+    "/{building_id}/rooms",
+    response_model=list[RoomResponse],
+)
+def get_building_rooms(
+    building_id: int,
+    db: Session = Depends(get_db),
+):
+    building = db.get(Building, building_id)
+
+    if building is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Building not found",
+        )
+
+    return (
+        db.query(Room)
+        .filter(Room.building_id == building_id)
+        .all()
+    )
