@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>UniSpace — аудиторный фонд</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <section id="auth-view" class="auth-view">
+        <div class="auth-promo">
+            <a class="brand brand-light" href="/">
+                <span class="brand-logo">U</span>
+                <span>UniSpace</span>
+            </a>
+
+            <div class="promo-content">
+                <span class="eyebrow eyebrow-light">Цифровой кампус</span>
+                <h1>Каждая аудитория под контролем.</h1>
+                <p>
+                    Корпуса, подразделения и помещения университета
+                    в одной понятной системе.
+                </p>
+            </div>
+
+            <p class="promo-footer">Учёт аудиторного фонда · 2026</p>
+        </div>
+
+        <div class="auth-panel">
+            <div class="auth-card">
+                <span class="eyebrow">Добро пожаловать</span>
+                <h2 id="auth-title">Вход в систему</h2>
+                <p id="auth-description">
+                    Введите данные своей учётной записи
+                </p>
+
+                <div class="auth-tabs">
+                    <button
+                        class="auth-tab active"
+                        data-auth-mode="login"
+                        type="button"
+                    >
+                        Войти
+                    </button>
+                    <button
+                        class="auth-tab"
+                        data-auth-mode="register"
+                        type="button"
+                    >
+                        Регистрация
+                    </button>
+                </div>
+
+                <form id="auth-form">
+                    <label>
+                        Логин
+                        <input
+                            id="username"
+                            name="username"
+                            type="text"
+                            minlength="3"
+                            maxlength="50"
+                            placeholder="Например, anna"
+                            required
+                        >
+                    </label>
+
+                    <label>
+                        Пароль
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            minlength="8"
+                            maxlength="128"
+                            placeholder="Не менее 8 символов"
+                            required
+                        >
+                    </label>
+
+                    <p id="auth-error" class="form-error" hidden></p>
+
+                    <button class="primary-button" type="submit">
+                        <span id="auth-submit-text">Войти в систему</span>
+                        <span>→</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div id="app-view" class="application" hidden>
+        <aside class="sidebar">
+            <a class="brand brand-light" href="/">
+                <span class="brand-logo">U</span>
+                <span>UniSpace</span>
+            </a>
+
+            <p class="sidebar-caption">Рабочее пространство</p>
+
+            <nav class="navigation">
+                <button
+                    class="nav-button active"
+                    data-section="overview"
+                    type="button"
+                >
+                    <span>⌂</span>
+                    Обзор
+                </button>
+
+                <button
+                    class="nav-button"
+                    data-section="buildings"
+                    type="button"
+                >
+                    <span>▦</span>
+                    Корпуса
+                </button>
+
+                <button
+                    class="nav-button"
+                    data-section="rooms"
+                    type="button"
+                >
+                    <span>□</span>
+                    Помещения
+                </button>
+
+                <button
+                    class="nav-button"
+                    data-section="departments"
+                    type="button"
+                >
+                    <span>◇</span>
+                    Подразделения
+                </button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a class="docs-link" href="/docs" target="_blank">
+                    <span>?</span>
+                    Документация API
+                </a>
+
+                <div class="profile">
+                    <span id="profile-letter" class="profile-avatar">U</span>
+                    <div>
+                        <strong id="profile-name">Пользователь</strong>
+                        <small id="profile-login">@user</small>
+                    </div>
+                    <button
+                        id="logout-button"
+                        class="logout-button"
+                        type="button"
+                        title="Выйти"
+                    >
+                        ↪
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <small>Аудиторный фонд</small>
+                    <h1 id="page-title">Обзор фонда</h1>
+                </div>
+
+                <input
+                    id="search-input"
+                    class="search-input"
+                    type="search"
+                    placeholder="Поиск по разделу"
+                >
+            </header>
+
+            <section
+                id="overview-section"
+                class="content-section active"
+            >
+                <div class="welcome-row">
+                    <div>
+                        <span class="eyebrow">Сводка на сегодня</span>
+                        <h2>
+                            Добрый день,
+                            <span id="welcome-name">пользователь</span>!
+                        </h2>
+                        <p>
+                            Здесь собрана актуальная информация
+                            об аудиторном фонде университета.
+                        </p>
+                    </div>
+
+                    <button
+                        id="refresh-button"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        ↻ Обновить данные
+                    </button>
+                </div>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <span class="stat-icon blue">▦</span>
+                        <small>Корпуса</small>
+                        <strong id="buildings-count">0</strong>
+                        <p>учебных корпусов</p>
+                    </article>
+
+                    <article class="stat-card">
+                        <span class="stat-icon purple">□</span>
+                        <small>Помещения</small>
+                        <strong id="rooms-count">0</strong>
+                        <p>помещений на учёте</p>
+                    </article>
+
+                    <article class="stat-card">
+                        <span class="stat-icon green">↗</span>
+                        <small>Площадь</small>
+                        <strong id="total-area">0</strong>
+                        <p>м² общей площади</p>
+                    </article>
+
+                    <article class="stat-card">
+                        <span class="stat-icon orange">♟</span>
+                        <small>Вместимость</small>
+                        <strong id="total-capacity">0</strong>
+                        <p>учебных мест</p>
+                    </article>
+                </div>
+
+                <div class="overview-grid">
+                    <article class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h3>Последние помещения</h3>
+                                <p>Недавно добавленные записи</p>
+                            </div>
+                            <button
+                                class="text-button"
+                                data-open-section="rooms"
+                                type="button"
+                            >
+                                Все помещения →
+                            </button>
+                        </div>
+
+                        <div id="recent-rooms" class="recent-list"></div>
+                    </article>
+
+                    <article class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h3>Структура фонда</h3>
+                                <p>Распределение по корпусам</p>
+                            </div>
+                        </div>
+
+                        <div
+                            id="building-structure"
+                            class="structure-list"
+                        ></div>
+                    </article>
+                </div>
+            </section>
+
+            <section
+                id="buildings-section"
+                class="content-section"
+                hidden
+            >
+                <div class="section-heading">
+                    <div>
+                        <h2>Корпуса</h2>
+                        <p>Адреса и учебные здания университета</p>
+                    </div>
+                    <button
+                        class="primary-button compact"
+                        data-create="building"
+                        type="button"
+                    >
+                        + Добавить корпус
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Адрес</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="buildings-table"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section
+                id="rooms-section"
+                class="content-section"
+                hidden
+            >
+                <div class="section-heading">
+                    <div>
+                        <h2>Помещения</h2>
+                        <p>Площадь, вместимость и принадлежность</p>
+                    </div>
+                    <button
+                        class="primary-button compact"
+                        data-create="room"
+                        type="button"
+                    >
+                        + Добавить помещение
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Номер</th>
+                                <th>Корпус</th>
+                                <th>Подразделение</th>
+                                <th>Площадь</th>
+                                <th>Мест</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rooms-table"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section
+                id="departments-section"
+                class="content-section"
+                hidden
+            >
+                <div class="section-heading">
+                    <div>
+                        <h2>Подразделения</h2>
+                        <p>Кафедры и другие подразделения</p>
+                    </div>
+                    <button
+                        class="primary-button compact"
+                        data-create="department"
+                        type="button"
+                    >
+                        + Добавить подразделение
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="departments-table"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <dialog id="record-dialog">
+        <form id="record-form">
+            <div class="dialog-heading">
+                <div>
+                    <small>Редактирование данных</small>
+                    <h2 id="dialog-title">Новая запись</h2>
+                </div>
+                <button
+                    id="dialog-close"
+                    class="icon-button"
+                    type="button"
+                >
+                    ×
+                </button>
+            </div>
+
+            <div id="dialog-fields" class="dialog-fields"></div>
+
+            <p id="dialog-error" class="form-error" hidden></p>
+
+            <div class="dialog-actions">
+                <button
+                    id="dialog-cancel"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Отмена
+                </button>
+                <button class="primary-button compact" type="submit">
+                    Сохранить
+                </button>
+            </div>
+        </form>
+    </dialog>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
