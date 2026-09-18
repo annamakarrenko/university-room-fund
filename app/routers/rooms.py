@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.database import get_db
 from app.models import Building, Department, Room
 from app.schemas import RoomCreate, RoomResponse, RoomUpdate
@@ -9,6 +10,7 @@ from app.schemas import RoomCreate, RoomResponse, RoomUpdate
 router = APIRouter(
     prefix="/rooms",
     tags=["Rooms"],
+    dependencies=[Depends(get_current_user)],
 )
 
 
@@ -64,7 +66,7 @@ def create_room(
         raise HTTPException(
             status_code=409,
             detail="Room number already exists in this building",
-        )
+        ) from None
 
     db.refresh(room)
     return room
@@ -124,7 +126,7 @@ def update_room(
         raise HTTPException(
             status_code=409,
             detail="Room number already exists in this building",
-        )
+        ) from None
 
     db.refresh(room)
     return room

@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.database import get_db
 from app.models import Department
 from app.schemas import (
@@ -12,6 +14,7 @@ from app.schemas import (
 router = APIRouter(
     prefix="/departments",
     tags=["Departments"],
+    dependencies=[Depends(get_current_user)],
 )
 
 @router.post(
@@ -90,5 +93,11 @@ def delete_department(
         )
 
     db.delete(department)
-    db.commit()
-
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Department owns rooms and cannot be deleted",
+        ) from None

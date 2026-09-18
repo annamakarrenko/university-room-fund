@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.database import get_db
 from app.models import Building, Room
 from app.schemas import (
@@ -13,6 +15,7 @@ from app.schemas import (
 router = APIRouter(
     prefix="/buildings",
     tags=["Buildings"],
+    dependencies=[Depends(get_current_user)],
 )
 
 @router.post(
@@ -91,7 +94,14 @@ def delete_building(
         )
 
     db.delete(building)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Building contains rooms and cannot be deleted",
+        ) from None
 
 @router.get(
     "/{building_id}/rooms",
