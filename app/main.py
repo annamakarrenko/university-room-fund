@@ -1,6 +1,9 @@
 import os
+from pathlib import Path
 
 from fastapi import Depends, FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth import get_current_user
@@ -11,6 +14,7 @@ from app.routers.departments import router as departments_router
 from app.routers.rooms import router as rooms_router
 
 Base.metadata.create_all(bind=engine)
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 session_secret = os.getenv("SESSION_SECRET")
 
@@ -31,6 +35,11 @@ app.add_middleware(
     max_age=60 * 60 * 8,
 )
 
+app.mount(
+    "/static",
+    StaticFiles(directory=STATIC_DIR),
+    name="static",
+)
 app.include_router(auth_router)
 
 authentication_required = [Depends(get_current_user)]
@@ -48,6 +57,9 @@ app.include_router(
     dependencies=authentication_required,
 )
 
+@app.get("/", include_in_schema=False)
+def index():
+    return FileResponse(STATIC_DIR / "index.html")
 
 @app.get("/health")
 def health():
