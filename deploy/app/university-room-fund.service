@@ -1,0 +1,19 @@
+[Unit]
+Description=University Room Fund FastAPI Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=roomfund
+Group=roomfund
+WorkingDirectory=/opt/university-room-fund
+EnvironmentFile=/etc/university-room-fund/app.env
+ExecStart=/opt/university-room-fund/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
