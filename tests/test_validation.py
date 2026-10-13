@@ -63,3 +63,36 @@ def test_password_too_short():
             username="anna",
             password="1234567",
         )
+
+def test_room_number_cannot_be_empty():
+    with pytest.raises(ValidationError):
+        RoomCreate(
+            number="",
+            area=30,
+            capacity=20,
+            building_id=1,
+            department_id=1,
+        )
+
+
+def test_room_number_cannot_exceed_20_characters():
+    with pytest.raises(ValidationError):
+        RoomCreate(
+            number="123456789012345678901",
+            area=30,
+            capacity=20,
+            building_id=1,
+            department_id=1,
+        )
+
+
+def test_room_number_with_20_characters_is_allowed():
+    room = RoomCreate(
+        number="12345678901234567890",
+        area=30,
+        capacity=20,
+        building_id=1,
+        department_id=1,
+    )
+
+    assert len(room.number) == 20
