@@ -280,3 +280,10 @@ PostgreSQL принимает подключения на порт `5432` тол
 - `deploy/app/university-room-fund.service`
 - `deploy/db/setup_db.sh`
 - `deploy/scripts/check_deployment.sh`
+
+## Лабораторная работа №3. Локальный контур проверок
+
+Перед внесением функциональных изменений проект должен проходить полный локальный набор проверок:
+
+```bash
+make verify
