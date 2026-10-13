@@ -25,3 +25,15 @@ coverage:
 	$(PYTHON) -m pytest --cov=app --cov-report=term-missing --cov-report=xml:reports/coverage.xml --junitxml=reports/tests.xml --cov-fail-under=40
 
 verify: lint sast coverage
+
+migrate:
+	$(PYTHON) -m alembic upgrade head
+
+migration:
+	$(PYTHON) -m alembic revision --autogenerate -m "$(name)"
+
+backup:
+	powershell -ExecutionPolicy Bypass -File scripts/backup.ps1
+
+restore:
+	powershell -ExecutionPolicy Bypass -File scripts/restore.ps1 -BackupFile "$(BACKUP)"

@@ -50,6 +50,8 @@ class RoomCreate(BaseModel):
     capacity: int = Field(ge=0)
     building_id: int
     department_id: int
+    room_type: str = "classroom"
+    is_active: bool = True
 
 
 class RoomUpdate(BaseModel):
@@ -58,6 +60,8 @@ class RoomUpdate(BaseModel):
     capacity: int = Field(ge=0)
     building_id: int
     department_id: int
+    room_type: str = "classroom"
+    is_active: bool = True
 
 
 class RoomResponse(BaseModel):
@@ -67,5 +71,7 @@ class RoomResponse(BaseModel):
     capacity: int
     building_id: int
     department_id: int
+    room_type: str
+    is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
