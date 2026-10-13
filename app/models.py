@@ -48,6 +48,17 @@ class Room(Base):
     number: Mapped[str] = mapped_column(String(20), nullable=False)
     area: Mapped[float] = mapped_column(nullable=False)
     capacity: Mapped[int] = mapped_column(nullable=False)
+    
+    room_type: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        server_default="classroom",
+    )
+
+    is_active: Mapped[bool] = mapped_column(
+        nullable=False,
+        server_default="true",
+    )
 
     building_id: Mapped[int] = mapped_column(
         ForeignKey("buildings.id"),

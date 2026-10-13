@@ -53,6 +53,8 @@ def create_room(
         capacity=data.capacity,
         building_id=data.building_id,
         department_id=data.department_id,
+        room_type=data.room_type,
+        is_active=data.is_active,
     )
 
     db.add(room)
@@ -114,8 +116,10 @@ def update_room(
     room.number = data.number
     room.area = data.area
     room.capacity = data.capacity
+    room.room_type = data.room_type
     room.building_id = data.building_id
     room.department_id = data.department_id
+    room.is_active = data.is_active
 
     try:
         db.commit()
