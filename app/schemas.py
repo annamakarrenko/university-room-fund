@@ -45,7 +45,7 @@ class DepartmentResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class RoomCreate(BaseModel):
-    number: str
+    number: str = Field(min_length=1, max_length=20)
     area: float = Field(gt=0)
     capacity: int = Field(ge=0)
     building_id: int
@@ -55,7 +55,7 @@ class RoomCreate(BaseModel):
 
 
 class RoomUpdate(BaseModel):
-    number: str
+    number: str = Field(min_length=1, max_length=20)
     area: float = Field(gt=0)
     capacity: int = Field(ge=0)
     building_id: int
