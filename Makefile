@@ -1,5 +1,8 @@
 PYTHON=.venv/Scripts/python.exe
 
+setup:
+	powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
+
 install:
 	$(PYTHON) -m pip install -r requirements.txt
 	$(PYTHON) -m pip install -r requirements-dev.txt
@@ -13,6 +16,8 @@ lint:
 sast:
 	$(PYTHON) -m bandit -r app
 
+quality: lint sast
+
 test:
 	$(PYTHON) -m pytest -q
 
@@ -23,8 +28,6 @@ test-report:
 coverage:
 	$(PYTHON) -c "from pathlib import Path; Path('reports').mkdir(exist_ok=True)"
 	$(PYTHON) -m pytest --cov=app --cov-report=term-missing --cov-report=xml:reports/coverage.xml --junitxml=reports/tests.xml --cov-fail-under=40
-
-verify: lint sast coverage
 
 migrate:
 	$(PYTHON) -m alembic upgrade head
@@ -37,3 +40,5 @@ backup:
 
 restore:
 	powershell -ExecutionPolicy Bypass -File scripts/restore.ps1 -BackupFile "$(BACKUP)"
+
+verify: quality coverage
