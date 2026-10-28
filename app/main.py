@@ -7,13 +7,11 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth import get_current_user
-from app.database import Base, engine
 from app.routers.auth import router as auth_router
 from app.routers.buildings import router as buildings_router
 from app.routers.departments import router as departments_router
 from app.routers.rooms import router as rooms_router
 
-Base.metadata.create_all(bind=engine)
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 session_secret = os.getenv("SESSION_SECRET")
