@@ -36,9 +36,9 @@ jobs:
 
       - name: Start and verify services
         run: |
-          docker compose up -d
+          docker compose up -d --wait --wait-timeout 120
           docker compose ps -a
-          curl --fail --retry 10 --retry-delay 2 --retry-connrefused \
+          curl --fail --show-error --max-time 10 \
             http://127.0.0.1:8000/health
           test "$(docker compose exec -T app id -u)" = "10001"
 
