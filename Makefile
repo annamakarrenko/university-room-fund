@@ -64,3 +64,16 @@ container-backup:
 container-restore:
 	@test -n "$(BACKUP)" || (echo "Usage: make container-restore BACKUP=backups/file.dump" && exit 1)
 	./scripts/container_restore.sh "$(BACKUP)"
+
+.PHONY: container-check
+
+container-check:
+	python3 scripts/container_check.py
+
+.PHONY: container-runtime-check container-restore-check
+
+container-runtime-check:
+	bash scripts/container_runtime_check.sh
+
+container-restore-check:
+	bash scripts/container_restore_check.sh
