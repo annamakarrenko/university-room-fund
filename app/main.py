@@ -22,7 +22,7 @@ if not session_secret:
 app = FastAPI(
     title="University Room Fund",
     description="API для учета аудиторного фонда университета",
-    version="0.1.0",
+    version="0.1.1",
 )
 
 app.add_middleware(

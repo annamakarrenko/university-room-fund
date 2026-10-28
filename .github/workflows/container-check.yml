@@ -42,6 +42,23 @@ jobs:
             http://127.0.0.1:8000/health
           test "$(docker compose exec -T app id -u)" = "10001"
 
+      - name: Runtime checks
+        run: bash scripts/container_runtime_check.sh
+
+      - name: Restore database into new volume
+        run: bash scripts/container_restore_check.sh
+
       - name: Cleanup
         if: always()
-        run: docker compose down --remove-orphans
+        run: |
+          docker compose -p lab4-runtime \
+            -f compose.yaml -f compose.test.yaml \
+            down -v --remove-orphans || true
+
+          docker ps -aq --filter "name=lab4-restore-check-db-" \
+            | xargs -r docker rm -f
+
+          docker volume ls -q --filter "name=lab4-restore-check-" \
+            | xargs -r docker volume rm
+
+          docker compose down --remove-orphans || true

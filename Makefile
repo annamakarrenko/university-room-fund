@@ -69,3 +69,11 @@ container-restore:
 
 container-check:
 	python3 scripts/container_check.py
+
+.PHONY: container-runtime-check container-restore-check
+
+container-runtime-check:
+	bash scripts/container_runtime_check.sh
+
+container-restore-check:
+	bash scripts/container_restore_check.sh
