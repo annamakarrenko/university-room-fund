@@ -42,3 +42,25 @@ restore:
 	powershell -ExecutionPolicy Bypass -File scripts/restore.ps1 -BackupFile "$(BACKUP)"
 
 verify: quality coverage
+# Lab 4: Docker container environment
+
+.PHONY: up down container-build container-backup container-restore container-ps
+
+up:
+	docker compose up -d --build
+
+down:
+	docker compose down
+
+container-build:
+	docker compose build
+
+container-ps:
+	docker compose ps
+
+container-backup:
+	./scripts/container_backup.sh
+
+container-restore:
+	@test -n "$(BACKUP)" || (echo "Usage: make container-restore BACKUP=backups/file.dump" && exit 1)
+	./scripts/container_restore.sh "$(BACKUP)"

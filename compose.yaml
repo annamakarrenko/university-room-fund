@@ -1,0 +1,75 @@
+name: university-room-fund
+
+services:
+  db:
+    image: postgres:17.6-bookworm@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3
+    environment:
+      POSTGRES_DB: university_fund
+      POSTGRES_USER: roomfund_app
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U roomfund_app -d university_fund"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 100
+    stop_grace_period: 30s
+    restart: unless-stopped
+
+  migrate:
+    image: university-room-fund:lab4
+    build: .
+    command: ["python", "-m", "alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql://roomfund_app:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/university_fund
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+    mem_limit: 256m
+    cpus: 0.5
+    restart: "no"
+
+  app:
+    image: university-room-fund:lab4
+    build: .
+    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      DATABASE_URL: postgresql://roomfund_app:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/university_fund
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - backend
+      - frontend
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 100
+    stop_grace_period: 15s
+    restart: unless-stopped
+
+networks:
+  backend:
+    internal: true
+  frontend:
+    driver: bridge
+
+volumes:
+  pgdata:
