@@ -9,10 +9,10 @@ RUN groupadd --gid 10001 appgroup && \
     useradd --uid 10001 --gid appgroup \
     --no-create-home --shell /usr/sbin/nologin appuser
 
-COPY requirements.txt .
+COPY requirements.lock .
 
 RUN python -m pip install --no-cache-dir \
-    -r requirements.txt
+    --require-hashes -r requirements.lock
 
 COPY --chown=appuser:appgroup app ./app
 COPY --chown=appuser:appgroup alembic ./alembic
