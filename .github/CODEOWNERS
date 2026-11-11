@@ -1,11 +1,19 @@
-# Default code owner
+# Default owner
 * @annamakarrenko
 
 # Application and tests
 /app/ @annamakarrenko
 /tests/ @annamakarrenko
 
-# CI/CD workflows and container configuration
-/.github/workflows/ @annamakarrenko
+# Acceptance and security rules
+/Makefile @annamakarrenko
+/pyproject.toml @annamakarrenko
+/requirements.txt @annamakarrenko
+/requirements-dev.txt @annamakarrenko
+/requirements.lock @annamakarrenko
+/scripts/ @annamakarrenko
+
+# CI and container configuration
+/.github/ @annamakarrenko
 /Dockerfile @annamakarrenko
-/compose.yaml @annamakarrenko
+/compose*.yaml @annamakarrenko
