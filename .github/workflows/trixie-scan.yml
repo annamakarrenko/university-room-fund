@@ -1,0 +1,51 @@
+name: Lab5 Trixie Image Comparison
+
+on:
+  push:
+    branches:
+      - lab5/ci-pipeline
+    paths:
+      - .github/workflows/trixie-scan.yml
+      - Dockerfile
+      - requirements.lock
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Compare Trixie Image Security
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare temporary Dockerfile
+        run: |
+          sed '1c\FROM python:3.12-slim-trixie@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b' \
+            Dockerfile > Dockerfile.trixie-test
+
+      - name: Build Trixie image
+        run: |
+          docker build \
+            -f Dockerfile.trixie-test \
+            -t university-room-fund:trixie-scan .
+
+      - name: Scan Trixie image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: university-room-fund:trixie-scan
+          format: json
+          output: trivy-trixie-report.json
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+
+      - name: Upload comparison report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab5-trixie-security-report
+          path: trivy-trixie-report.json
+          if-no-files-found: error
