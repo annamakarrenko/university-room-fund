@@ -1,13 +1,14 @@
-FROM python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+FROM python:3.12-alpine@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+RUN apk add --no-cache 'krb5-libs=1.22.3-r0'
+
 WORKDIR /app
 
-RUN groupadd --gid 10001 appgroup && \
-    useradd --uid 10001 --gid appgroup \
-    --no-create-home --shell /usr/sbin/nologin appuser
+RUN addgroup -g 10001 -S appgroup && \
+    adduser -u 10001 -S -D -H -G appgroup appuser
 
 COPY requirements.lock .
 

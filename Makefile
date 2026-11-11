@@ -1,4 +1,8 @@
+ifeq ($(OS),Windows_NT)
 PYTHON=.venv/Scripts/python.exe
+else
+PYTHON=.venv/bin/python
+endif
 
 setup:
 	powershell -ExecutionPolicy Bypass -File scripts/setup.ps1

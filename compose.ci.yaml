@@ -1,0 +1,21 @@
+services:
+  ci-db:
+    image: postgres:17.6-bookworm@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3
+    environment:
+      POSTGRES_DB: university_fund_ci
+      POSTGRES_USER: ci_user
+      POSTGRES_PASSWORD: ${CI_DB_PASSWORD:?CI_DB_PASSWORD is required}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ci_user -d university_fund_ci"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ci_backend
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 100
+
+networks:
+  ci_backend:
+    internal: true
