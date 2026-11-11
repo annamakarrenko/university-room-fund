@@ -11,4 +11,8 @@ __pycache__/
 reports/
 htmlcov/
 .coverage
+backups/.env.ci
+
+.env.ci
+
 backups/
