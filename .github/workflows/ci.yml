@@ -34,6 +34,24 @@ jobs:
       - name: Run quality checks
         run: make quality PYTHON=python
 
+      - name: Generate analyzer reports
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p reports
+          python -m ruff check . --output-format json --output-file reports/ruff.json
+          python -m bandit -r app -f json -o reports/bandit.json
+
+      - name: Upload analyzer reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab5-quality-reports
+          path: |
+            reports/ruff.json
+            reports/bandit.json
+          if-no-files-found: error
+
   tests:
     name: Automated Tests
     runs-on: ubuntu-24.04
