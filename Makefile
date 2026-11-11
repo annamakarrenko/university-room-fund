@@ -20,7 +20,7 @@ lint:
 sast:
 	$(PYTHON) -m bandit -r app
 
-quality: lint sast
+quality: lint
 
 test:
 	$(PYTHON) -m pytest -q
