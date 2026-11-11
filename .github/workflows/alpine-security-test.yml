@@ -1,0 +1,64 @@
+name: Lab5 Alpine Security Experiment
+
+on:
+  push:
+    branches:
+      - lab5/alpine-security-test
+
+permissions:
+  contents: read
+
+jobs:
+  alpine-scan:
+    name: Alpine Image Security Scan
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Alpine image
+        run: |
+          docker build \
+            -f Dockerfile.alpine-test \
+            -t university-room-fund:alpine-scan .
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: university-room-fund:alpine-scan
+          format: json
+          output: trivy-alpine-report.json
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+
+      - name: Count vulnerabilities
+        run: |
+          python3 - <<'PY'
+          import json
+          from collections import Counter
+
+          with open("trivy-alpine-report.json") as f:
+              report = json.load(f)
+
+          findings = [
+              v
+              for result in report.get("Results", [])
+              for v in result.get("Vulnerabilities", [])
+          ]
+
+          counts = Counter(v["Severity"] for v in findings)
+
+          print("HIGH:", counts["HIGH"])
+          print("CRITICAL:", counts["CRITICAL"])
+          print("TOTAL:", len(findings))
+          PY
+
+      - name: Upload Trivy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab5-alpine-trivy-report
+          path: trivy-alpine-report.json
+          if-no-files-found: warn
