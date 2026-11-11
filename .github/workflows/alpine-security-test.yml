@@ -53,6 +53,11 @@ jobs:
           print("HIGH:", counts["HIGH"])
           print("CRITICAL:", counts["CRITICAL"])
           print("TOTAL:", len(findings))
+
+          if counts["HIGH"] or counts["CRITICAL"]:
+              raise SystemExit("Security gate FAILED")
+
+          print("Security gate PASSED")
           PY
 
       - name: Upload Trivy report
