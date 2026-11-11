@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def test_violation(label, filename, old, new):
+def check_violation(label, filename, old, new):
     path = ROOT / filename
     original = path.read_bytes()
     content = original.decode("utf-8")
@@ -22,6 +22,7 @@ def test_violation(label, filename, old, new):
 
         result = subprocess.run(
             ["make", "container-check"],
+            check=False,
             cwd=ROOT,
             capture_output=True,
             text=True,
@@ -78,7 +79,7 @@ def main():
     ]
 
     results = [
-        test_violation(*test)
+        check_violation(*test)
         for test in tests
     ]
 
