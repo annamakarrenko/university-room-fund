@@ -65,3 +65,10 @@ def health():
         "status": "ok",
         "service": "university-room-fund",
     }
+
+@app.get("/version")
+def version():
+    return {
+        "service": "university-room-fund",
+        "version": os.getenv("RELEASE_SHA", "unknown"),
+    }
