@@ -16,3 +16,6 @@ backups/.env.ci
 .env.ci
 
 backups/
+
+# Lab6 staging secrets
+.env.staging

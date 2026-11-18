@@ -1,0 +1,63 @@
+name: urf-staging
+
+services:
+  db:
+    image: postgres:17.6-bookworm@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3
+    environment:
+      POSTGRES_DB: university_fund_staging
+      POSTGRES_USER: staging_app
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    volumes:
+      - staging_pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U staging_app -d university_fund_staging"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  migrate:
+    image: ${IMAGE_REF:?IMAGE_REF is required}
+    command: ["python", "-m", "alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql://staging_app:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/university_fund_staging
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: "no"
+
+  app:
+    image: ${IMAGE_REF:?IMAGE_REF is required}
+    environment:
+      DATABASE_URL: postgresql://staging_app:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/university_fund_staging
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+      RELEASE_SHA: ${RELEASE_SHA:?RELEASE_SHA is required}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - backend
+      - frontend
+    ports:
+      - "127.0.0.1:18080:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+networks:
+  backend:
+    internal: true
+  frontend:
+    driver: bridge
+
+volumes:
+  staging_pgdata:
