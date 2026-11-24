@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: University Room Fund
+    orgId: 1
+    folder: University Room Fund
+    type: file
+    disableDeletion: true
+    editable: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

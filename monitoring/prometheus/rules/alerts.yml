@@ -1,0 +1,57 @@
+groups:
+  - name: urf_availability
+    rules:
+      - alert: ApplicationDown
+        expr: up{job="urf-app"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "University Room Fund is unavailable"
+          description: "Prometheus cannot scrape application metrics."
+
+      - alert: DatabaseUnavailable
+        expr: urf_database_up{job="urf-app"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database is unavailable"
+          description: "Application cannot access PostgreSQL."
+
+      - alert: HighServerErrorRate
+        expr: sum(rate(urf_http_errors_total{job="urf-app",status_code=~"5.."}[2m])) > 0.1
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP server error rate"
+          description: "Application produces repeated HTTP 5xx errors."
+
+  - name: urf_infrastructure
+    rules:
+      - alert: HostDiskSpaceLow
+        expr: |
+          node_filesystem_avail_bytes{job="node-exporter",mountpoint="/"}
+          /
+          node_filesystem_size_bytes{job="node-exporter",mountpoint="/"}
+          < 0.15
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host disk space is low"
+          description: "Less than 15 percent of root filesystem is available."
+
+      - alert: HostMemoryLow
+        expr: |
+          node_memory_MemAvailable_bytes{job="node-exporter"}
+          /
+          node_memory_MemTotal_bytes{job="node-exporter"}
+          < 0.10
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host available memory is low"
+          description: "Less than 10 percent of host memory is available."

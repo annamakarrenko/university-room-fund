@@ -91,3 +91,8 @@ infrastructure-check:
 
 infrastructure-policy-test:
 	python3 scripts/test_infrastructure_policy.py
+
+.PHONY: monitoring-check
+
+monitoring-check:
+	python3 scripts/monitoring_check.py

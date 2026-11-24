@@ -1,0 +1,51 @@
+name: Lab8 Monitoring Check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  monitoring-check:
+    name: Monitoring Policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install validation dependencies
+        run: python -m pip install PyYAML==6.0.2
+
+      - name: Validate monitoring policies
+        run: make monitoring-check
+
+      - name: Validate Docker Compose configuration
+        run: |
+          export GRAFANA_ADMIN_PASSWORD="$(openssl rand -hex 24)"
+          docker compose -f monitoring/compose.yaml config --quiet
+
+      - name: Validate Prometheus configuration and rules
+        run: |
+          IMAGE=$(python3 -c 'import yaml; print(yaml.safe_load(open("monitoring/compose.yaml"))["services"]["prometheus"]["image"])')
+
+          docker run --rm \
+            --entrypoint /bin/promtool \
+            -v "$PWD/monitoring/prometheus:/etc/prometheus:ro" \
+            "$IMAGE" \
+            check config /etc/prometheus/prometheus.yml
+
+          docker run --rm \
+            --entrypoint /bin/promtool \
+            -v "$PWD/monitoring/prometheus:/etc/prometheus:ro" \
+            "$IMAGE" \
+            check rules /etc/prometheus/rules/alerts.yml
