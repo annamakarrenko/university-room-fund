@@ -11,9 +11,9 @@ CASES = [
         "Database port exposure",
         "roles/application/templates/compose.yaml.j2",
         '    image: "{{ postgres_image }}"',
-        '    image: "{{ postgres_image }}"\n'
+        ('    image: "{{ postgres_image }}"\n'
         '    ports:\n'
-        '      - "5432:5432"',
+        '      - "5432:5432"'),
         "no published database ports",
     ),
     (
@@ -79,7 +79,7 @@ def main():
 
             if (
                 result.returncode == 0
-                or f"FAIL: " not in result.stderr
+                or "FAIL: " not in result.stderr
                 or expected not in result.stderr
             ):
                 raise SystemExit(f"FAIL: {name}")
