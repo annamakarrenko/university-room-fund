@@ -42,7 +42,7 @@ services:
   app:
     image: university-room-fund:lab4
     build: .
-    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
     environment:
       DATABASE_URL: postgresql://roomfund_app:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/university_fund
       SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}

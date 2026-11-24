@@ -20,6 +20,7 @@ connect_args = (
 engine = create_engine(
     DATABASE_URL,
     connect_args=connect_args,
+    hide_parameters=True,
 )
 
 SessionLocal = sessionmaker(
