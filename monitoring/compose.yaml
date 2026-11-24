@@ -16,6 +16,7 @@ services:
     networks:
       - monitoring
       - application
+      - staging
     mem_limit: 512m
     cpus: 0.5
     pids_limit: 128
@@ -89,6 +90,10 @@ networks:
   application:
     external: true
     name: urf-lab8-test_frontend
+
+  staging:
+    external: true
+    name: urf-staging_frontend
 
 volumes:
   prometheus_data:

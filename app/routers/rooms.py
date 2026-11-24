@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -73,8 +73,30 @@ def create_room(
 
 
 @router.get("", response_model=list[RoomResponse])
-def get_rooms(db: Session = Depends(get_db)):
-    return db.query(Room).all()
+def get_rooms(
+    db: Session = Depends(get_db),
+    min_capacity: int | None = Query(default=None, ge=0),
+    room_type: str | None = Query(
+        default=None, min_length=1, max_length=30
+    ),
+    is_active: bool | None = None,
+    building_id: int | None = Query(default=None, gt=0),
+):
+    query = db.query(Room)
+
+    if min_capacity is not None:
+        query = query.filter(Room.capacity >= min_capacity)
+
+    if room_type is not None:
+        query = query.filter(Room.room_type == room_type)
+
+    if is_active is not None:
+        query = query.filter(Room.is_active == is_active)
+
+    if building_id is not None:
+        query = query.filter(Room.building_id == building_id)
+
+    return query.all()
 
 
 @router.get("/{room_id}", response_model=RoomResponse)

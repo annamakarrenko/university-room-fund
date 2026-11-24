@@ -97,10 +97,10 @@ def main():
 
     check(
         jobs == {
-            "prometheus", "urf-app",
+            "prometheus", "urf-app", "urf-staging",
             "node-exporter", "cadvisor",
         },
-        "All four scrape jobs configured",
+        "All five scrape jobs configured",
     )
 
     rules = yaml.safe_load(
@@ -141,6 +141,24 @@ def main():
         (
             ROOT / "grafana/dashboards/urf-overview.json"
         ).read_text()
+    )
+
+    variables = {
+        item["name"]: item
+        for item in dashboard["templating"]["list"]
+    }
+
+    check(
+        variables["environment"]["query"] == "lab8-test,staging",
+        "Dashboard supports both environments",
+    )
+
+    check(
+        compose["networks"]["staging"]["external"]
+        and compose["networks"]["staging"]["name"]
+        == "urf-staging_frontend"
+        and "staging" in services["prometheus"]["networks"],
+        "Prometheus connected to staging network",
     )
 
     panels = dashboard["panels"]
