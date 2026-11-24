@@ -15,3 +15,8 @@
 
   roles:
     - common
+    - users
+    - ssh
+    - docker
+    - firewall
+    - application

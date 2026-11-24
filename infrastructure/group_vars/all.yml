@@ -10,3 +10,6 @@ base_packages:
   - git
   - ufw
   - openssh-server
+app_image: "ghcr.io/annamakarrenko/university-room-fund@sha256:42bc580fe68687372fd7fe9ef8052135a007b92af50dedb51ede81b63ba6ee7d"
+app_release_sha: "dfb0ab409b22c222d8cad7e490f8466c17b6e040"
+postgres_image: "postgres:17.6-bookworm@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3"
