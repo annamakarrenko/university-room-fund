@@ -1,0 +1,64 @@
+name: urf-{{ app_environment }}
+
+services:
+  db:
+    image: "{{ postgres_image }}"
+    environment:
+      POSTGRES_DB: "{{ app_db_name }}"
+      POSTGRES_USER: "{{ app_db_user }}"
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ app_db_user }} -d {{ app_db_name }}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  migrate:
+    image: "{{ app_image }}"
+    command: ["python", "-m", "alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql://{{ app_db_user }}:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/{{ app_db_name }}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: "no"
+
+  app:
+    image: "{{ app_image }}"
+    user: "10001:10001"
+    environment:
+      DATABASE_URL: postgresql://{{ app_db_user }}:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/{{ app_db_name }}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+      RELEASE_SHA: "{{ app_release_sha }}"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - backend
+      - frontend
+    ports:
+      - "{{ app_bind_address }}:{{ app_host_port }}:{{ app_container_port }}"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-T", "3", "-O", "/dev/null", "http://127.0.0.1:{{ app_container_port }}/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+networks:
+  backend:
+    internal: true
+  frontend:
+    driver: bridge
+
+volumes:
+  pgdata:

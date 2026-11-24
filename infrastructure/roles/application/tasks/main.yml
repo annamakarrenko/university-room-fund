@@ -1,0 +1,76 @@
+---
+- name: Create application root directory
+  ansible.builtin.file:
+    path: "/opt/{{ app_name }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create environment deployment directory
+  ansible.builtin.file:
+    path: "{{ app_deploy_dir }}"
+    state: directory
+    owner: root
+    group: "{{ app_group }}"
+    mode: '0750'
+
+- name: Create application backup directory
+  ansible.builtin.file:
+    path: "{{ app_deploy_dir }}/backups"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Deploy Docker Compose configuration
+  ansible.builtin.template:
+    src: compose.yaml.j2
+    dest: "{{ app_deploy_dir }}/compose.yaml"
+    owner: root
+    group: "{{ app_group }}"
+    mode: '0640'
+  register: compose_config
+
+- name: Deploy application secrets
+  ansible.builtin.template:
+    src: app.env.j2
+    dest: "{{ app_deploy_dir }}/.env"
+    owner: root
+    group: root
+    mode: '0600'
+  no_log: true
+  diff: false
+  register: secrets_config
+
+- name: Inspect migration container
+  community.docker.docker_container_info:
+    name: "urf-{{ app_environment }}-migrate-1"
+  register: migration_container
+  no_log: true
+
+- name: Deploy application and run migrations
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_deploy_dir }}"
+    state: present
+    pull: missing
+    recreate: auto
+  when: >
+    compose_config.changed or
+    secrets_config.changed or
+    not migration_container.exists or
+    migration_container.container.State.Status != 'exited' or
+    migration_container.container.State.ExitCode != 0
+  no_log: true
+
+- name: Ensure application and database are running
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_deploy_dir }}"
+    state: present
+    services:
+      - db
+      - app
+    dependencies: false
+    pull: missing
+    recreate: auto
+  no_log: true

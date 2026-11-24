@@ -32,14 +32,55 @@ SSH private keys and plaintext secrets must not be committed.
 Run commands from the infrastructure directory.
 
     ansible-inventory --graph
-    ansible app_servers -m ansible.builtin.ping
-    ansible-playbook site.yml --syntax-check
+    ansible app_servers -m ansible.builtin.ping --ask-vault-pass
+    ansible-playbook site.yml --syntax-check --ask-vault-pass
 
 ## Development deployment
 
-    ansible-playbook site.yml -K
+    ansible-playbook site.yml -K --ask-vault-pass
 
 Repeated execution must not introduce unnecessary changes.
 
 Staging deployment is disabled by default to protect
 the existing environment.
+
+## Infrastructure roles
+
+- common: hostname and base packages
+- users: restricted application user and group
+- ssh: key-based authentication and SSH hardening
+- docker: Docker Engine and Compose installation
+- firewall: restricted incoming traffic
+- application: directories, configuration, secrets and containers
+
+## Ansible dependencies
+
+    ansible-galaxy collection install -r requirements.yml
+
+## Secrets
+
+Environment secrets are encrypted using Ansible Vault.
+Vault files are stored in inventories/*/group_vars/all/vault.yml.
+The Vault password and SSH private keys are stored outside Git.
+The generated application .env file has permissions 0600.
+
+## Bootstrap prerequisites
+
+Install Ubuntu Server with Python 3 and OpenSSH.
+Create the deployadmin user with sudo access.
+Configure trusted SSH keys before running the playbook.
+
+## Deployment properties
+
+- Application and database images are pinned by digest.
+- The application container runs with UID 10001.
+- PostgreSQL has no published host port.
+- The application binds to the loopback interface.
+- Successful migrations are not rerun without a reason.
+- Repeated deployment must produce changed=0.
+
+## Development health check
+
+Run on urf-lab7:
+
+    curl -fsS http://127.0.0.1:18081/health
