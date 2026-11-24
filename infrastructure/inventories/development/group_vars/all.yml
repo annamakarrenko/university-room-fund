@@ -1,0 +1,7 @@
+---
+app_environment: development
+app_deploy_dir: /opt/university-room-fund/development
+app_host_port: 18081
+app_bind_address: "127.0.0.1"
+app_db_name: university_fund_dev
+app_db_user: development_app

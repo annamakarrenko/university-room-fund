@@ -1,0 +1,12 @@
+---
+app_name: university-room-fund
+app_user: roomfund
+app_group: roomfund
+app_container_port: 8000
+ssh_port: 22
+base_packages:
+  - ca-certificates
+  - curl
+  - git
+  - ufw
+  - openssh-server

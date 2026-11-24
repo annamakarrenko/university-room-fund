@@ -1,0 +1,7 @@
+---
+app_environment: staging
+app_deploy_dir: /opt/university-room-fund/staging
+app_host_port: 18080
+app_bind_address: "127.0.0.1"
+app_db_name: university_fund_staging
+app_db_user: staging_app
