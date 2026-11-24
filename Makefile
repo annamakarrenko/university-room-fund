@@ -81,3 +81,13 @@ container-runtime-check:
 
 container-restore-check:
 	bash scripts/container_restore_check.sh
+
+.PHONY: infrastructure-check
+
+infrastructure-check:
+	python3 scripts/infrastructure_check.py
+
+.PHONY: infrastructure-policy-test
+
+infrastructure-policy-test:
+	python3 scripts/test_infrastructure_policy.py
