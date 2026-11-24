@@ -28,3 +28,8 @@
 /scripts/infrastructure_check.py @annamakarrenko @anyahaman
 /scripts/test_infrastructure_policy.py @annamakarrenko @anyahaman
 /.github/workflows/infrastructure-check.yml @annamakarrenko @anyahaman
+
+# Observability and monitoring
+/monitoring/ @annamakarrenko @anyahaman
+/scripts/monitoring_check.py @annamakarrenko @anyahaman
+/.github/workflows/monitoring-check.yml @annamakarrenko @anyahaman
