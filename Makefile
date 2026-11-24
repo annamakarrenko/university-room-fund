@@ -12,7 +12,7 @@ install:
 	$(PYTHON) -m pip install -r requirements-dev.txt
 
 run:
-	$(PYTHON) -m uvicorn app.main:app --reload
+	$(PYTHON) -m uvicorn app.main:app --reload --no-access-log
 
 lint:
 	$(PYTHON) -m ruff check .

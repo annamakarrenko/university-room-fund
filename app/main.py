@@ -7,9 +7,11 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth import get_current_user
+from app.observability import ObservabilityMiddleware
 from app.routers.auth import router as auth_router
 from app.routers.buildings import router as buildings_router
 from app.routers.departments import router as departments_router
+from app.routers.monitoring import router as monitoring_router
 from app.routers.rooms import router as rooms_router
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -33,12 +35,15 @@ app.add_middleware(
     max_age=60 * 60 * 8,
 )
 
+app.add_middleware(ObservabilityMiddleware)
+
 app.mount(
     "/static",
     StaticFiles(directory=STATIC_DIR),
     name="static",
 )
 app.include_router(auth_router)
+app.include_router(monitoring_router)
 
 authentication_required = [Depends(get_current_user)]
 
