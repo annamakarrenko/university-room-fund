@@ -58,6 +58,19 @@ def main():
     assert health["status"] == "ok"
     print("PASS: health")
 
+    print("Checking readiness...")
+    readiness = request("GET", "/ready")
+
+    if (
+        readiness.get("status") != "ready"
+        or readiness.get("database") != "ok"
+    ):
+        raise RuntimeError(
+            "Application or database is not ready"
+        )
+
+    print("PASS: readiness and database")
+
     print("Checking version...")
     version = request("GET", "/version")
     assert version["version"] == args.expected_sha, (
