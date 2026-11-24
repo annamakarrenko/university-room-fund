@@ -1,30 +1,30 @@
 # Default owner
-* @annamakarrenko
+* @annamakarrenko @anyahaman
 
 # Application and tests
-/app/ @annamakarrenko
-/tests/ @annamakarrenko
+/app/ @annamakarrenko @anyahaman
+/tests/ @annamakarrenko @anyahaman
 
 # Acceptance and security rules
-/Makefile @annamakarrenko
-/pyproject.toml @annamakarrenko
-/requirements.txt @annamakarrenko
-/requirements-dev.txt @annamakarrenko
-/requirements.lock @annamakarrenko
-/scripts/ @annamakarrenko
+/Makefile @annamakarrenko @anyahaman
+/pyproject.toml @annamakarrenko @anyahaman
+/requirements.txt @annamakarrenko @anyahaman
+/requirements-dev.txt @annamakarrenko @anyahaman
+/requirements.lock @annamakarrenko @anyahaman
+/scripts/ @annamakarrenko @anyahaman
 
 # CI and container configuration
-/.github/ @annamakarrenko
-/Dockerfile @annamakarrenko
-/compose*.yaml @annamakarrenko
+/.github/ @annamakarrenko @anyahaman
+/Dockerfile @annamakarrenko @anyahaman
+/compose*.yaml @annamakarrenko @anyahaman
 
 # Infrastructure configuration and security
-/infrastructure/ @annamakarrenko
-/infrastructure/roles/ @annamakarrenko
-/infrastructure/inventories/ @annamakarrenko
-/infrastructure/ansible.cfg @annamakarrenko
-/infrastructure/site.yml @annamakarrenko
-/infrastructure/requirements.yml @annamakarrenko
-/scripts/infrastructure_check.py @annamakarrenko
-/scripts/test_infrastructure_policy.py @annamakarrenko
-/.github/workflows/infrastructure-check.yml @annamakarrenko
+/infrastructure/ @annamakarrenko @anyahaman
+/infrastructure/roles/ @annamakarrenko @anyahaman
+/infrastructure/inventories/ @annamakarrenko @anyahaman
+/infrastructure/ansible.cfg @annamakarrenko @anyahaman
+/infrastructure/site.yml @annamakarrenko @anyahaman
+/infrastructure/requirements.yml @annamakarrenko @anyahaman
+/scripts/infrastructure_check.py @annamakarrenko @anyahaman
+/scripts/test_infrastructure_policy.py @annamakarrenko @anyahaman
+/.github/workflows/infrastructure-check.yml @annamakarrenko @anyahaman
