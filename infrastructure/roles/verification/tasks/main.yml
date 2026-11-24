@@ -1,0 +1,20 @@
+---
+- name: Wait for application health endpoint
+  ansible.builtin.uri:
+    url: "http://{{ app_bind_address }}:{{ app_host_port }}/health"
+    method: GET
+    status_code: 200
+    return_content: true
+    use_proxy: false
+  register: application_health
+  until: application_health.status | default(0) == 200
+  retries: 30
+  delay: 5
+  changed_when: false
+
+- name: Verify application health response
+  ansible.builtin.assert:
+    that:
+      - application_health.json.status == 'ok'
+      - application_health.json.service == app_name
+    success_msg: "Application health check passed"

@@ -84,3 +84,42 @@ Configure trusted SSH keys before running the playbook.
 Run on urf-lab7:
 
     curl -fsS http://127.0.0.1:18081/health
+
+## Infrastructure acceptance requirements
+
+- Application ports must bind to the loopback interface.
+- Database ports must not be published.
+- Application containers must run without root privileges.
+- Container images must be pinned by digest.
+- Secrets must be encrypted in Git and protected on hosts.
+- SSH must use key-based authentication.
+- Incoming traffic must be denied by default.
+- Infrastructure roles must avoid shell and raw tasks.
+- Repeated execution must produce no unnecessary changes.
+- Application health must be verified after deployment.
+- Critical infrastructure changes require code owner approval.
+
+## Local policy checks
+
+Run from the repository root:
+
+    make infrastructure-check
+    make infrastructure-policy-test
+
+## Infrastructure CI
+
+The infrastructure-check.yml workflow validates inventories,
+playbook syntax, security policies and negative policy tests.
+
+CI validation does not require real Vault passwords or access
+to managed servers.
+
+## Configuration drift recovery
+
+Change the permissions of the empty development backups
+directory from 0700 to 0755.
+
+Run the Ansible playbook again and verify that permissions
+return to 0700 and the application remains healthy.
+
+A subsequent execution must report changed=0 and failed=0.

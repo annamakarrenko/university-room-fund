@@ -17,3 +17,14 @@
 /.github/ @annamakarrenko
 /Dockerfile @annamakarrenko
 /compose*.yaml @annamakarrenko
+
+# Infrastructure configuration and security
+/infrastructure/ @annamakarrenko
+/infrastructure/roles/ @annamakarrenko
+/infrastructure/inventories/ @annamakarrenko
+/infrastructure/ansible.cfg @annamakarrenko
+/infrastructure/site.yml @annamakarrenko
+/infrastructure/requirements.yml @annamakarrenko
+/scripts/infrastructure_check.py @annamakarrenko
+/scripts/test_infrastructure_policy.py @annamakarrenko
+/.github/workflows/infrastructure-check.yml @annamakarrenko

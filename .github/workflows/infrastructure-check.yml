@@ -1,0 +1,53 @@
+name: Lab7 Infrastructure Check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  infrastructure-check:
+    name: Infrastructure Policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Ansible
+        run: |
+          python -m pip install ansible-core==2.16.3
+
+      - name: Install Ansible collections
+        run: |
+          ansible-galaxy collection install -r infrastructure/requirements.yml
+
+      - name: Check development inventory
+        working-directory: infrastructure
+        run: |
+          ansible-inventory -i inventories/development/hosts.yml --graph
+
+      - name: Check staging inventory
+        working-directory: infrastructure
+        run: |
+          ansible-inventory -i inventories/staging/hosts.yml --graph
+
+      - name: Validate playbook syntax
+        working-directory: infrastructure
+        run: |
+          ansible-playbook site.yml --syntax-check
+
+      - name: Check infrastructure policies
+        run: make infrastructure-check
+
+      - name: Test unsafe infrastructure changes
+        run: make infrastructure-policy-test
