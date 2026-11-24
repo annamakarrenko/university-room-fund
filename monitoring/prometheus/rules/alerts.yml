@@ -2,7 +2,7 @@ groups:
   - name: urf_availability
     rules:
       - alert: ApplicationDown
-        expr: up{job="urf-app"} == 0
+        expr: up{job=~"urf-app|urf-staging"} == 0
         for: 30s
         labels:
           severity: critical
@@ -11,7 +11,7 @@ groups:
           description: "Prometheus cannot scrape application metrics."
 
       - alert: DatabaseUnavailable
-        expr: urf_database_up{job="urf-app"} == 0
+        expr: urf_database_up{job=~"urf-app|urf-staging"} == 0
         for: 30s
         labels:
           severity: critical
@@ -20,7 +20,7 @@ groups:
           description: "Application cannot access PostgreSQL."
 
       - alert: HighServerErrorRate
-        expr: sum(rate(urf_http_errors_total{job="urf-app",status_code=~"5.."}[2m])) > 0.1
+        expr: sum by (job, environment) (rate(urf_http_errors_total{job=~"urf-app|urf-staging",status_code=~"5.."}[2m])) > 0.1
         for: 30s
         labels:
           severity: warning
