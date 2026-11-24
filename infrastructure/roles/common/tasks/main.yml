@@ -1,0 +1,11 @@
+---
+- name: Configure node hostname
+  ansible.builtin.hostname:
+    name: "{{ node_hostname }}"
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600

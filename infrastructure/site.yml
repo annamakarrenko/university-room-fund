@@ -1,0 +1,17 @@
+---
+- name: Configure University Room Fund infrastructure
+  hosts: app_servers
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Validate target environment
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution'] == 'Ubuntu'
+          - ansible_facts['distribution_version'] == '24.04'
+          - app_environment in ['development', 'staging']
+          - app_environment != 'staging' or (allow_staging_apply | default(false) | bool)
+
+  roles:
+    - common
